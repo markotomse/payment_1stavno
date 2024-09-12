@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="payment_acquirer_summit" model="payment.acquirer">
+            <field name="name">1Stavno</field>
+            <field name="image_128" type="base64" file="summit_payment_acquirer/static/description/icon.png"/>
+            <field name="provider">summit</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="view_template_id" ref="summit_payment_acquirer.summit_form"/>
+            <field name="state">test</field>
+            <field name="api_key_production">dummy</field>
+            <field name="api_key_test">dummy</field>
+            <field name="checkout_title">1Stavno</field>
+            <field name="description">Plugin za prejemanje plačil preko 1Stavno.</field>
+            <field name="installments_size">12</field>
+            <field name="testing">yes</field>
+            <field name="widget_id">dummy</field>
+            <field name="instructions">Navodila za plačilo</field>
+            <field name="display_catalog_prices">yes</field>
+            <field name="display_product_prices">yes</field>
+            <field name="enable_for_virtual">True</field>
+        </record>
+    </data>
+</odoo>

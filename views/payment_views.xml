@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="acquirer_form_summit" model="ir.ui.view">
+        <field name="name">acquirer.form.summit</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="acquirer"]' position='inside'>
+                <group attrs="{'invisible': [('provider', '!=', 'summit')]}">
+                    <field name="summit_api_key_production" password="True" attrs="{'required': [('provider', '=', 'summit'), ('state', '=', 'enabled')]}"/>
+                    <field name="summit_api_key_test" password="True" attrs="{'required': [('provider', '=', 'summit'), ('state', '=', 'test')]}"/>
+                    <field name="summit_testing"/>
+                    <field name="summit_widget_id"/>
+                    <field name="summit_installments_size"/>
+                    <field name="summit_display_catalog_prices"/>
+                    <field name="summit_display_product_prices"/>
+                    <field name="summit_checkout_title"/>
+                    <field name="summit_description"/>
+                    <field name="summit_instructions"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="acquirer_kanban_summit" model="ir.ui.view">
+        <field name="name">acquirer.kanban.summit</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_kanban_image')]" position="inside">
+                <img t-if="record.provider.raw_value == 'summit'" t-att-src="kanban_image('payment.acquirer', 'image_128', record.id.raw_value)" t-att-title="record.name.value" t-att-alt="record.name.value" class="o_image_64_contain"/>
+            </xpath>
+            <field name="name" position="after">
+                <span t-if="record.provider.raw_value == 'summit'">1Stavno</span>
+            </field>
+        </field>
+    </record>
+
+    <!-- Add cron job for updating order statuses and information -->
+    <record id="ir_cron_summit_update_order_statuses" model="ir.cron">
+        <field name="name">Summit: Update Order Statuses</field>
+        <field name="model_id" ref="model_payment_transaction"/>
+        <field name="state">code</field>
+        <field name="code">model.summit_update_order_statuses()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+
+    <record id="ir_cron_summit_update_installments" model="ir.cron">
+        <field name="name">Summit: Update Installments</field>
+        <field name="model_id" ref="model_payment_acquirer"/>
+        <field name="state">code</field>
+        <field name="code">model.summit_update_installments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+</odoo>

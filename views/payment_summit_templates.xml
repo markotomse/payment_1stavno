@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="summit_form">
+        <div>
+            <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+            <!-- Summit-specific form fields -->
+            <input type="hidden" name="AuthToken" t-att-value="summit_api_key_production or summit_api_key_test"/>
+            <input type="hidden" name="referenceNumber" t-att-value="reference"/>
+            <input type="hidden" name="creditAmount" t-att-value="amount"/>
+            <input type="hidden" name="Currency" t-att-value="currency.name"/>
+            <input type="hidden" name="PartnerID" t-att-value="partner_id"/>
+           
+            <!-- Additional fields -->
+            <input type="hidden" name="StNarocila" t-att-value="reference"/>
+            <input type="hidden" name="CenaDDV" t-att-value="amount"/>
+            <input type="hidden" name="CenaBrezDDV" t-att-value="amount_untaxed"/>
+            <input type="hidden" name="DDV" t-att-value="amount_tax"/>
+            <t t-if="order">
+                <t t-foreach="order.order_line" t-as="line">
+                    <input type="hidden" t-attf-name="Artikli[{{ line_index }}]" t-att-value="'Product name: %s | Quantity: %s | Item total: %.2f' % (line.product_id.name, line.product_uom_qty, line.price_total)"/>
+                </t>
+            </t>
+            <t t-call="summit_payment_acquirer.summit_installment_calculation"/>
+            <div class="form-group">
+                <label for="installment_count" class="control-label">Number of Installments</label>
+                <select name="installment_count" id="installment_count" class="form-control">
+                    <option value="">Select number of installments</option>
+                    <t t-foreach="range(3, 13)" t-as="i">
+                        <option t-att-value="i"><t t-esc="i"/> installments</option>
+                    </t>
+                </select>
+            </div>
+            <!-- Add confirmation button -->
+            <div class="form-group">
+                <button type="submit" id="summit_confirm" class="btn btn-primary">Confirm Payment</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add installment calculation template -->
+    <template id="summit_installment_calculation">
+        <div class="card-wrap">
+            <div class="card">
+                <div class="card-content">
+                    <img class="img-logo" t-att-src="'/summit_payment_acquirer/static/src/img/stavno-logo.png'" alt="Stavno logo"/>
+                    <div class="calculation">
+                        <div class="loan-term">
+                            <select name="obroki" id="obroki" onchange="updateValue(this)">
+                            </select>
+                            </div>
+                        <div class="icon-times">x</div>
+                        <div class="term-amount" id="term-amount">20,00 €</div>
+                        <div class="tooltip top">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Možnost plačila na obroke tudi za tujce in upokojence.<br/></span>
+                <span>Brez pologa. Brez skritih stroškov.</span>
+            </div>
+        </div>
+    </template>
+</odoo>
